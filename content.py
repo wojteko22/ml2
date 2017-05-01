@@ -10,7 +10,6 @@ from __future__ import division
 import numpy as np
 
 
-
 def hamming_distance(X, X_train):
     """
     :param X: zbior porownwanych obiektow N1xD
@@ -40,8 +39,8 @@ def sort_train_labels_knn(Dist, y):
     wartosci podobienstw odpowiadajacego wiersza macierzy
     Dist. Uzyc algorytmu mergesort.
     """
-    w = Dist.argsort(kind='mergesort')
-    return y[w]
+    order = Dist.argsort(kind='mergesort')
+    return y[order]
 
 
 def p_y_x_knn(y, k):
@@ -53,7 +52,11 @@ def p_y_x_knn(y, k):
     :param k: liczba najblizszuch sasiadow dla KNN
     :return: macierz prawdopodobienstw dla obiektow z X
     """
-    pass
+    NUMBER_OF_CLASSES = 4
+    resized = np.delete(y, range(k, y.shape[1]), axis=1)
+    summedWithZero = np.vstack(np.apply_along_axis(np.bincount, axis=1, arr=resized, minlength=NUMBER_OF_CLASSES + 1))
+    summed = np.delete(summedWithZero, 0, axis=1)
+    return summed / k
 
 
 def classification_error(p_y_x, y_true):
