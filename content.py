@@ -52,10 +52,10 @@ def p_y_x_knn(y, k):
     :param k: liczba najblizszuch sasiadow dla KNN
     :return: macierz prawdopodobienstw dla obiektow z X
     """
-    NUMBER_OF_CLASSES = 4
+    number_of_classes = 4
     resized = np.delete(y, range(k, y.shape[1]), axis=1)
-    summedWithZero = np.vstack(np.apply_along_axis(np.bincount, axis=1, arr=resized, minlength=NUMBER_OF_CLASSES + 1))
-    summed = np.delete(summedWithZero, 0, axis=1)
+    summed_with_zero = np.vstack(np.apply_along_axis(np.bincount, axis=1, arr=resized, minlength=number_of_classes + 1))
+    summed = np.delete(summed_with_zero, 0, axis=1)
     return summed / k
 
 
@@ -67,9 +67,9 @@ def classification_error(p_y_x, y_true):
     Kazdy wiersz macierzy reprezentuje rozklad p(y|x)
     :return: blad klasyfikacji
     """
-    NUMBER_OF_CLASSES = p_y_x.shape[1]
-    reversedRows = np.fliplr(p_y_x)
-    predicted = NUMBER_OF_CLASSES - np.argmax(reversedRows, axis=1)
+    number_of_classes = p_y_x.shape[1]
+    reversed_rows = np.fliplr(p_y_x)
+    predicted = number_of_classes - np.argmax(reversed_rows, axis=1)
     difference = predicted - y_true
     return np.count_nonzero(difference) / y_true.shape[0]
 
@@ -84,15 +84,10 @@ def model_selection_knn(Xval, Xtrain, yval, ytrain, k_values):
     :return: funkcja wykonuje selekcje modelu knn i zwraca krotke (best_error,best_k,errors), gdzie best_error to najnizszy
     osiagniety blad, best_k - k dla ktorego blad byl najnizszy, errors - lista wartosci bledow dla kolejnych k z k_values
     """
-    bestKIndex = 0
-    errors = []
-    sorted = sort_train_labels_knn(hamming_distance(Xval, Xtrain), ytrain)
-    for i in range(len(k_values)):
-        error = classification_error(p_y_x_knn(sorted, k_values[i]), yval)
-        errors.append(error)
-        if (error < errors[bestKIndex]):
-            bestKIndex = i
-    return (errors[bestKIndex], k_values[bestKIndex], errors)
+    sorted_labels = sort_train_labels_knn(hamming_distance(Xval, Xtrain), ytrain)
+    errors = list(map(lambda k: classification_error(p_y_x_knn(sorted_labels, k), yval), k_values))
+    min_index = np.argmin(errors)
+    return min(errors), k_values[min_index], errors
 
 
 def estimate_a_priori_nb(ytrain):
