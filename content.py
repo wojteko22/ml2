@@ -84,7 +84,15 @@ def model_selection_knn(Xval, Xtrain, yval, ytrain, k_values):
     :return: funkcja wykonuje selekcje modelu knn i zwraca krotke (best_error,best_k,errors), gdzie best_error to najnizszy
     osiagniety blad, best_k - k dla ktorego blad byl najnizszy, errors - lista wartosci bledow dla kolejnych k z k_values
     """
-    pass
+    bestKIndex = 0
+    errors = []
+    sorted = sort_train_labels_knn(hamming_distance(Xval, Xtrain), ytrain)
+    for i in range(len(k_values)):
+        error = classification_error(p_y_x_knn(sorted, k_values[i]), yval)
+        errors.append(error)
+        if (error < errors[bestKIndex]):
+            bestKIndex = i
+    return (errors[bestKIndex], k_values[bestKIndex], errors)
 
 
 def estimate_a_priori_nb(ytrain):
