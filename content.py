@@ -95,7 +95,9 @@ def estimate_a_priori_nb(ytrain):
     :param ytrain: etykiety dla dla danych treningowych 1xN
     :return: funkcja wyznacza rozklad a priori p(y) i zwraca p_y - wektor prawdopodobienstw a priori 1xM
     """
-    pass
+    summed_with_zero = np.bincount(ytrain)
+    summed = np.delete(summed_with_zero, 0)
+    return summed / ytrain.shape[0]
 
 
 def estimate_p_x_y_nb(Xtrain, ytrain, a, b):
