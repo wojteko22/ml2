@@ -67,7 +67,11 @@ def classification_error(p_y_x, y_true):
     Kazdy wiersz macierzy reprezentuje rozklad p(y|x)
     :return: blad klasyfikacji
     """
-    pass
+    NUMBER_OF_CLASSES = p_y_x.shape[1]
+    reversedRows = np.fliplr(p_y_x)
+    predicted = NUMBER_OF_CLASSES - np.argmax(reversedRows, axis=1)
+    difference = predicted - y_true
+    return np.count_nonzero(difference) / y_true.shape[0]
 
 
 def model_selection_knn(Xval, Xtrain, yval, ytrain, k_values):
